@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     private Timer timer;
     private TimerTask timerTask;
     final Handler handler = new Handler();
+    private boolean sendingMessage = false;
 
     private boolean isFlashOn;
     private String message;
@@ -137,24 +138,29 @@ public class MainActivity extends Activity {
     }
 
     public void sendMessage(String message) {
-        //set a new Timer
-        timer = new Timer();
+        if (!sendingMessage) {
+            sendingMessage = true;
 
-        this.message = message;
-        this.actualPosition = 0;
+            //set a new Timer
+            timer = new Timer();
 
-        //initialize the TimerTask's job
-        initializeTimerTask();
+            this.message = message;
+            this.actualPosition = 0;
 
-        // Set button color
-        Button sosButton = (Button)findViewById(R.id.sos_button);
-        sosButton.setBackgroundColor(Color.parseColor("#FF4081"));
+            //initialize the TimerTask's job
+            initializeTimerTask();
 
-        //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
-        timer.schedule(timerTask, DELAY_START, FRAME_RATE); //
+            // Set button color
+            Button sosButton = (Button) findViewById(R.id.sos_button);
+            sosButton.setBackgroundColor(Color.parseColor("#FF4081"));
+
+            //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
+            timer.schedule(timerTask, DELAY_START, FRAME_RATE);
+        }
     }
 
     public void cancelSendMessage() {
+        sendingMessage = false;
         turnOffFlashLight();
 
         // Set button color
