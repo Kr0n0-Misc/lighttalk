@@ -34,7 +34,8 @@
             android:name=".activity.ReceiveActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/FullscreenTheme"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
