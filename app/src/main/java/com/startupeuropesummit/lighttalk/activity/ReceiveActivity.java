@@ -46,6 +46,11 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
     private int lastWhites;
     private int actualWhites;
 
+    private boolean isFlashOn;
+    private boolean isLine;
+
+    private List<Character> message;
+
     // Loads camera view of OpenCV for us to use. This lets us see using OpenCV
     private CameraBridgeViewBase mOpenCvCameraView;
 
@@ -103,7 +108,10 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         };
 
         //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
-        timer.schedule(timerTask, 1000, MainActivity.FRAME_RATE); //
+        timer.schedule(timerTask, 1000, MainActivity.FRAME_RATE);
+
+        message = new ArrayList<Character>();
+        isFlashOn = false;
     }
 
     @Override
@@ -170,6 +178,33 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         actualWhites = (int)(histogram.get(1, 0)[0]);
 
         System.out.println("lastWhites: " + lastWhites + " - actualWhites: " + actualWhites);
+
+        calculateCharacter();
+    }
+
+    private void calculateCharacter() {
+        int minLastBorder = lastWhites - MainActivity.ERROR_HISTOGRAM;
+        int maxLastBorder = lastWhites + MainActivity.ERROR_HISTOGRAM;
+
+        if (actualWhites < minLastBorder) {
+            // From on to off
+            if (isLine) {
+                message.add(new Character('-'));
+            } else {
+                message.add(new Character(('.')));
+            }
+            
+            isFlashOn = false;
+            isLine = false;
+        } else if (actualWhites > maxLastBorder) {
+            // From off to on
+            isFlashOn = true;
+        } else {
+            // No change
+            if (isFlashOn) {
+                isLine = true;
+            }
+        }
     }
 
 }

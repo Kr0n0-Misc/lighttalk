@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     public static int DELAY_START = 3000;
     public static int FRAME_RATE = 500;
 
+    public static int ERROR_HISTOGRAM = 2000;
+
     private Context context;
 
     private Timer timer;
