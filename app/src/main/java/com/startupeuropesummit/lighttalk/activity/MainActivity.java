@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
 
     private static int DELAY_START = 3000;
-    private static int FRAME_RATE = 1000;
+    private static int FRAME_RATE = 500;
 
     private Context context;
 
