@@ -156,11 +156,15 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         //Imgproc.resize(image, image, image.size(), 0,0, 0);
         //Core.flip(image, image, 1);
 
-        // now convert to gray
+        // Convert to gray
         Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY);
 
-        // get the thresholded image
+        // Get the thresholded image
         Imgproc.threshold(image, image , MainActivity.THRESHOLD, 255, Imgproc.THRESH_BINARY);
+
+        // Clean
+        Imgproc.erode(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2,2)));
+        Imgproc.dilate(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2,2)));
 
         return image; // This function must return
     }
@@ -234,7 +238,9 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         }
 
         TextView textView = (TextView)findViewById(R.id.message);
-        textView.setText(messageStr);
+        if (textView != null) {
+            textView.setText(messageStr);
+        }
     }
 
 }

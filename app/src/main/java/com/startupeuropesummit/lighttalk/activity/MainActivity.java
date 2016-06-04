@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public static int DELAY_START = 3000;
     public static int FRAME_RATE = 500;
 
-    public static int THRESHOLD = 230;
+    public static int THRESHOLD = 128;
 
     private Context context;
 
