@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LightTalk</string>
+
+    <string name="send_button">Send message</string>
+    <string name="receive_button">Receive message</string>
+    <string name="sos_button">SOS</string>
+</resources>
