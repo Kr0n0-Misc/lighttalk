@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import com.startupeuropesummit.lighttalk.R;
 
@@ -19,14 +21,9 @@ import java.util.TimerTask;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends AppCompatActivity {
+public class SendActivity extends AppCompatActivity {
 
-    private static String TAG = "MainActivity";
-
-    public static int DELAY_START = 3000;
-    public static int FRAME_RATE = 500;
-
-    public static int THRESHOLD = 128;
+    private static String TAG = "SendActivity";
 
     private Context context;
 
@@ -44,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.context = this;
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_send);
 
         /*
 		 * First check if device is supporting flashlight or not
@@ -74,38 +71,22 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void sendMessageClicked(View view) {
-        Intent intent = new Intent(this, SendActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     * Receive message button clicked
-     * @param view
-     */
-    public void receiveMessageClicked(View view) {
-        Intent intent = new Intent(this, ReceiveActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     * SOS message button clicked
-     * @param view
-     */
-    public void sosMessageClicked(View view) {
         // Do something in response to button click
-        sendMessage("...-.");
+        EditText messageText = (EditText) findViewById(R.id.message_text);
+        Editable editText = messageText.getText();
+        if (editText != null) {
+            sendMessage(editText.toString());
+        }
     }
 
     private void turnOnFlashLight(){
-        try{
-
+        try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
             String[] list = manager.getCameraIdList();
             manager.setTorchMode(list[0], true);
 
             isFlashOn = true;
-        }
-        catch (CameraAccessException cae){
+        } catch (CameraAccessException cae){
             Log.e(TAG, cae.getMessage());
             cae.printStackTrace();
         }
@@ -143,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         initializeTimerTask();
 
         //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
-        timer.schedule(timerTask, DELAY_START, FRAME_RATE); //
+        timer.schedule(timerTask, MainActivity.DELAY_START, MainActivity.FRAME_RATE); //
     }
 
     public void cancelSendMessage() {
