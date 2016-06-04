@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.startupeuropesummit.lighttalk.R;
 
@@ -23,7 +26,7 @@ public class MainActivity extends Activity {
 
     private static String TAG = "MainActivity";
 
-    public static int DELAY_START = 3000;
+    public static int DELAY_START = 1500;
     public static int FRAME_RATE = 500;
 
     public static int THRESHOLD = 128;
@@ -32,6 +35,7 @@ public class MainActivity extends Activity {
 
     private Timer timer;
     private TimerTask timerTask;
+    final Handler handler = new Handler();
 
     private boolean isFlashOn;
     private String message;
@@ -142,12 +146,20 @@ public class MainActivity extends Activity {
         //initialize the TimerTask's job
         initializeTimerTask();
 
+        // Set button color
+        Button sosButton = (Button)findViewById(R.id.sos_button);
+        sosButton.setBackgroundColor(Color.parseColor("#FF4081"));
+
         //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
         timer.schedule(timerTask, DELAY_START, FRAME_RATE); //
     }
 
     public void cancelSendMessage() {
         turnOffFlashLight();
+
+        // Set button color
+        Button sosButton = (Button)findViewById(R.id.sos_button);
+        sosButton.setBackgroundColor(Color.parseColor("#4CB5AB"));
 
         //stop the timer, if it's not already null
         if (timer != null) {
@@ -190,7 +202,11 @@ public class MainActivity extends Activity {
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                checkActualPosition();
+                handler.post(new Runnable() {
+                    public void run() {
+                        checkActualPosition();
+                    }
+                });
             }
         };
     }

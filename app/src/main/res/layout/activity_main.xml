@@ -29,7 +29,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/send_button"
-                android:textSize="60dp"
+                android:textSize="72dp"
+                android:fontFamily="sans-serif-thin"
                 android:background="@color/button1"
                 android:onClick="sendMessageClicked"/>
 
@@ -40,7 +41,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/receive_button"
-                android:textSize="60dp"
+                android:textSize="72dp"
+                android:fontFamily="sans-serif-thin"
                 android:background="@color/button2"
                 android:onClick="receiveMessageClicked"/>
 
@@ -51,7 +53,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/sos_button"
-                android:textSize="60dp"
+                android:textSize="72dp"
+                android:fontFamily="sans-serif-thin"
                 android:background="@color/button3"
                 android:onClick="sosMessageClicked"/>
 

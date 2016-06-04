@@ -5,5 +5,5 @@
     <string name="receive_button">Receive</string>
     <string name="sos_button">SOS</string>
 
-    <string name="send_hint">Write your message</string>
+    <string name="send_hint">Message</string>
 </resources>

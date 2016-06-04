@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#555555</color>
-    <color name="colorPrimaryDark">#333333</color>
+    <color name="colorPrimaryDark">#202020</color>
     <color name="colorAccent">#FFFFFF</color>
 
     <color name="background">#555555</color>
 
+    <color name="background_send">#333333</color>
+
     <color name="button1">#333333</color>
     <color name="button2">#555555</color>
-    <color name="button3">#777777</color>
+    <color name="button3">#4CB5AB</color>
 
     <color name="color_message">#FFFFFF</color>
     <color name="color_message_hint">#AAAAAA</color>

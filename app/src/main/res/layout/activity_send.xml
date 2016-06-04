@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/background_send"
     android:orientation="vertical"
     tools:context=".activity.SendActivity"
     android:padding="15dp">
@@ -10,10 +10,12 @@
     <EditText
         android:id="@+id/message_text"
         android:layout_width="fill_parent"
-        android:layout_height="60dp"
+        android:layout_height="90dp"
         android:hint="@string/send_hint"
         android:textColor="@color/color_message"
         android:textColorHint="@color/color_message_hint"
+        android:textSize="60dp"
+        android:fontFamily="sans-serif-thin"
         android:inputType="text"/>
 
     <LinearLayout
@@ -33,7 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/send_button"
-            android:textSize="17dp"
+            android:textSize="48dp"
+            android:fontFamily="sans-serif-thin"
             android:textColor="@color/send_color"
             android:onClick="sendMessageClicked"/>
 
