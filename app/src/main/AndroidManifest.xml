@@ -3,6 +3,7 @@
     package="com.startupeuropesummit.lighttalk">
 
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
 
     <application

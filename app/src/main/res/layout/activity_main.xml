@@ -39,7 +39,7 @@
             <Button
                 android:id="@+id/send_button"
                 style="?metaButtonBarButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/send_button"
@@ -48,7 +48,7 @@
             <Button
                 android:id="@+id/receive_button"
                 style="?metaButtonBarButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/receive_button"
@@ -57,7 +57,7 @@
             <Button
                 android:id="@+id/sos_button"
                 style="?metaButtonBarButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/sos_button"

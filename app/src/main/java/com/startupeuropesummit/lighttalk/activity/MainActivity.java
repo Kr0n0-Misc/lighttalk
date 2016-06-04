@@ -1,15 +1,19 @@
 package com.startupeuropesummit.lighttalk.activity;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
-
 import com.startupeuropesummit.lighttalk.R;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -17,13 +21,28 @@ import com.startupeuropesummit.lighttalk.R;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private Camera camera;
+    private static String TAG = "MainActivity";
+
+    private static int DELAY_START = 3000;
+    private static int FRAME_RATE = 1000;
+
+    private Context context;
+
+    private Timer timer;
+    private TimerTask timerTask;
+    // Use a handler to be able to run in our TimerTask
+    final Handler handler = new Handler();
+
     private boolean isFlashOn;
-    Parameters params;
+    private String message;
+    private int actualPosition;
+    private boolean firstTime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.context = this;
 
         setContentView(R.layout.activity_main);
 
@@ -48,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
             alert.show();*/
             return;
         }
-
-        // Get the camera
-        getCamera();
     }
 
     /**
@@ -75,61 +91,102 @@ public class MainActivity extends AppCompatActivity {
      */
     public void sosMessageClicked(View view) {
         // Do something in response to button click
-
-        if (isFlashOn) {
-            turnOffFlash();
-        } else {
-            turnOnFlash();
-        }
+        sendMessage("...-.");
     }
 
-    /*
-     * Get the camera
-     */
-    private void getCamera() {
-        if (camera == null) {
-            try {
-                camera = Camera.open();
-                params = camera.getParameters();
-            } catch (RuntimeException e) {
-                Log.e("Failed to Open. Error: ", e.getMessage());
-            }
-        }
-    }
+    private void turnOnFlashLight(){
+        try{
 
-    /*
-     * Turning On flash
-     */
-    private void turnOnFlash() {
-        if (!isFlashOn) {
-            if (camera == null || params == null) {
-                return;
-            }
+            CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+            String[] list = manager.getCameraIdList();
+            manager.setTorchMode(list[0], true);
 
-            params = camera.getParameters();
-            params.setFlashMode(Parameters.FLASH_MODE_TORCH);
-            camera.setParameters(params);
-            camera.startPreview();
             isFlashOn = true;
         }
-
+        catch (CameraAccessException cae){
+            Log.e(TAG, cae.getMessage());
+            cae.printStackTrace();
+        }
     }
 
-    /*
-     * Turning Off flash
-     */
-    private void turnOffFlash() {
-        if (isFlashOn) {
-            if (camera == null || params == null) {
-                return;
-            }
+    private void turnOffFlashLight(){
+        try{
+            CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+            manager.setTorchMode(manager.getCameraIdList()[0], false);
 
-            params = camera.getParameters();
-            params.setFlashMode(Parameters.FLASH_MODE_OFF);
-            camera.setParameters(params);
-            camera.stopPreview();
             isFlashOn = false;
         }
+        catch (CameraAccessException cae){
+            Log.e(TAG, cae.getMessage());
+            cae.printStackTrace();
+        }
+    }
+
+    private void toggleFlashLight() {
+        if (isFlashOn) {
+            turnOffFlashLight();
+        } else {
+            turnOnFlashLight();
+        }
+    }
+
+    public void sendMessage(String message) {
+        //set a new Timer
+        timer = new Timer();
+
+        this.message = message;
+        this.actualPosition = 0;
+
+        //initialize the TimerTask's job
+        initializeTimerTask();
+
+        //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
+        timer.schedule(timerTask, DELAY_START, FRAME_RATE); //
+    }
+
+    public void cancelSendMessage() {
+        turnOffFlashLight();
+
+        //stop the timer, if it's not already null
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    public void checkActualPosition() {
+        if (actualPosition >= message.length()) {
+            // Message finished
+            cancelSendMessage();
+        } else {
+            char actualCharacter = message.charAt(actualPosition);
+
+            if (isFlashOn) {
+                if (actualCharacter == '-') {
+                    if (firstTime) {
+                        firstTime = false;
+                    } else {
+                        firstTime = true;
+                        turnOffFlashLight();
+                        actualPosition++;
+                    }
+                } else if (actualCharacter == '.') {
+                    turnOffFlashLight();
+                    actualPosition++;
+                }
+            } else {
+                Log.d(TAG, "actualCharacter: " + actualCharacter);
+                turnOnFlashLight();
+            }
+        }
+    }
+
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            public void run() {
+                checkActualPosition();
+            }
+        };
     }
 
 }
