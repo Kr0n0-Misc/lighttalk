@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Timer timer;
     private TimerTask timerTask;
-    // Use a handler to be able to run in our TimerTask
-    final Handler handler = new Handler();
 
     private boolean isFlashOn;
     private String message;

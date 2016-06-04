@@ -22,9 +22,13 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,20 +42,15 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
 
     private Timer timer;
     private TimerTask timerTask;
-    // Use a handler to be able to run in our TimerTask
-    final Handler handler = new Handler();
+
+    private int lastWhites;
+    private int actualWhites;
 
     // Loads camera view of OpenCV for us to use. This lets us see using OpenCV
     private CameraBridgeViewBase mOpenCvCameraView;
 
-    // Used in Camera selection from menu (when implemented)
-    private boolean mIsJavaCamera = true;
-    private MenuItem mItemSwitchCamera = null;
-
-    // These variables are used (at the moment) to fix camera orientation from 270degree to 0degree
-    Mat mRgba;
-    Mat mRgbaF;
-    Mat mRgbaT;
+    Mat image;
+    Mat imageProcessed;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -127,42 +126,50 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
     }
 
     public void onCameraViewStarted(int width, int height) {
-        mRgba = new Mat(height, width, CvType.CV_8UC4);
-        mRgbaF = new Mat(height, width, CvType.CV_8UC4);
-        mRgbaT = new Mat(width, width, CvType.CV_8UC4);
+        image = new Mat(height, width, CvType.CV_8UC4);
+        imageProcessed = new Mat(height, width, CvType.CV_8UC4);
     }
 
     public void onCameraViewStopped() {
-        mRgba.release();
+        image.release();
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        // TODO Auto-generated method stub
-        mRgba = inputFrame.rgba();
+        image = inputFrame.rgba();
 
         // Rotate mRgba 90 degrees
-        Core.transpose(mRgba, mRgbaT);
-        Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
-        Core.flip(mRgbaF, mRgba, 1 );
+        //Core.transpose(image, image);
+        //Imgproc.resize(image, image, image.size(), 0,0, 0);
+        //Core.flip(image, image, 1);
 
-        return mRgba; // This function must return
+        return image; // This function must return
     }
 
     public void checkActualLight() {
-        ArrayList<Mat> list = new ArrayList<Mat>();
-        list.add(mRgba);
-        MatOfInt channels = new MatOfInt(0);
-        Mat hist= new Mat();
-        MatOfInt histSize = new MatOfInt(25);
-        MatOfFloat ranges = new MatOfFloat(0f, 1f);
-        Imgproc.calcHist(list, channels, new Mat(), hist, histSize, ranges);
+        // now convert to gray
+        Imgproc.cvtColor(image, imageProcessed, Imgproc.COLOR_RGB2GRAY);
 
-        for (int i = 0; i< 25; i++) {
-            double[] histValues = hist.get(i, 0);
-            for (int j = 0; j < histValues.length; j++) {
-                Log.d(TAG, "yourData=" + histValues[j]);
-            }
-        }
+        // get the thresholded image
+        Imgproc.threshold(imageProcessed, imageProcessed , 128, 255, Imgproc.THRESH_BINARY);
+
+        // Calculate histogram
+        List<Mat> matList = new LinkedList<Mat>();
+        matList.add(image);
+        Mat histogram = new Mat();
+        MatOfFloat ranges=new MatOfFloat(0,256);
+        Imgproc.calcHist(
+                matList,
+                new MatOfInt(0),
+                new Mat(),
+                histogram,
+                new MatOfInt(2),
+                ranges);
+
+        //int black = (int)(histogram.get(0, 0)[0]);
+        lastWhites = actualWhites;
+        actualWhites = (int)(histogram.get(1, 0)[0]);
+
+        System.out.println("lastWhites: " + lastWhites + " - actualWhites: " + actualWhites);
     }
 
 }
