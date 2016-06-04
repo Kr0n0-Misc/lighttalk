@@ -1,6 +1,7 @@
 package com.startupeuropesummit.lighttalk.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
@@ -82,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void receiveMessageClicked(View view) {
-        // Do something in response to button click
+        Intent intent = new Intent(this, ReceiveActivity.class);
+        startActivity(intent);
     }
 
     /**
