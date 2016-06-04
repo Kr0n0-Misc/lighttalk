@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.startupeuropesummit.lighttalk.R;
 
@@ -42,6 +43,7 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
 
     private Timer timer;
     private TimerTask timerTask;
+    final Handler handler = new Handler();
 
     private int lastWhites;
     private int actualWhites;
@@ -103,7 +105,11 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
 
         timerTask = new TimerTask() {
             public void run() {
-                checkActualLight();
+                handler.post(new Runnable() {
+                    public void run() {
+                        checkActualLight();
+                    }
+                });
             }
         };
 
@@ -150,15 +156,21 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         //Imgproc.resize(image, image, image.size(), 0,0, 0);
         //Core.flip(image, image, 1);
 
+        // now convert to gray
+        Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY);
+
+        // get the thresholded image
+        Imgproc.threshold(image, image , MainActivity.THRESHOLD, 255, Imgproc.THRESH_BINARY);
+
         return image; // This function must return
     }
 
     public void checkActualLight() {
         // now convert to gray
-        Imgproc.cvtColor(image, imageProcessed, Imgproc.COLOR_RGB2GRAY);
+        //Imgproc.cvtColor(image, imageProcessed, Imgproc.COLOR_RGB2GRAY);
 
         // get the thresholded image
-        Imgproc.threshold(imageProcessed, imageProcessed , 128, 255, Imgproc.THRESH_BINARY);
+        //Imgproc.threshold(imageProcessed, imageProcessed , MainActivity.THRESHOLD, 255, Imgproc.THRESH_BINARY);
 
         // Calculate histogram
         List<Mat> matList = new LinkedList<Mat>();
@@ -183,8 +195,13 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
     }
 
     private void calculateCharacter() {
-        int minLastBorder = lastWhites - MainActivity.ERROR_HISTOGRAM;
-        int maxLastBorder = lastWhites + MainActivity.ERROR_HISTOGRAM;
+        int error = (int)(lastWhites * 0.2);
+        if (error < 1000) error = 1000;
+
+        System.out.println("error: " + error);
+
+        int minLastBorder = lastWhites - error;
+        int maxLastBorder = lastWhites + error;
 
         if (actualWhites < minLastBorder) {
             // From on to off
@@ -193,9 +210,12 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
             } else {
                 message.add(new Character(('.')));
             }
-            
+
             isFlashOn = false;
             isLine = false;
+
+            // Show message on screen
+            showMessage();
         } else if (actualWhites > maxLastBorder) {
             // From off to on
             isFlashOn = true;
@@ -205,6 +225,16 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
                 isLine = true;
             }
         }
+    }
+
+    private void showMessage() {
+        String messageStr = "";
+        for(int i=0; i<message.size(); i++) {
+            messageStr += message.get(i);
+        }
+
+        TextView textView = (TextView)findViewById(R.id.message);
+        textView.setText(messageStr);
     }
 
 }
