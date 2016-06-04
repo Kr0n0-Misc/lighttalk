@@ -1,10 +1,9 @@
 package com.startupeuropesummit.lighttalk.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -39,7 +38,7 @@ import java.util.TimerTask;
 /**
  * Created by dmananes on 04/06/16.
  */
-public class ReceiveActivity extends AppCompatActivity implements CvCameraViewListener2 {
+public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
 
     // Used for logging success or failure messages
     private static final String TAG = "ReceiveActivity";

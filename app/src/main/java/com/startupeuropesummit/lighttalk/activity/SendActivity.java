@@ -1,15 +1,15 @@
 package com.startupeuropesummit.lighttalk.activity;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.startupeuropesummit.lighttalk.R;
@@ -21,7 +21,7 @@ import java.util.TimerTask;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class SendActivity extends AppCompatActivity {
+public class SendActivity extends Activity {
 
     private static String TAG = "SendActivity";
 
@@ -64,6 +64,13 @@ public class SendActivity extends AppCompatActivity {
             alert.show();*/
             return;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     /**
