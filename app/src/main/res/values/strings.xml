@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">LightTalk</string>
 
-    <string name="send_button">Send message</string>
-    <string name="receive_button">Receive message</string>
+    <string name="send_button">Send</string>
+    <string name="receive_button">Receive</string>
     <string name="sos_button">SOS</string>
 
     <string name="send_hint">Write your message</string>
