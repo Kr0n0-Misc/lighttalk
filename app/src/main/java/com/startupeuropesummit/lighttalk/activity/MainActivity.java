@@ -154,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
             timer.cancel();
             timer = null;
         }
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
+        }
     }
 
     public void checkActualPosition() {

@@ -23,9 +23,12 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.sql.SQLInvalidAuthorizationSpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -40,6 +43,8 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
 
     // Used for logging success or failure messages
     private static final String TAG = "ReceiveActivity";
+
+    private static int SQUARE_SIZE = 200;
 
     private Timer timer;
     private TimerTask timerTask;
@@ -114,7 +119,7 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         };
 
         //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
-        timer.schedule(timerTask, 1000, MainActivity.FRAME_RATE);
+        timer.schedule(timerTask, MainActivity.DELAY_START, MainActivity.FRAME_RATE);
 
         message = new ArrayList<Character>();
         isFlashOn = false;
@@ -141,7 +146,7 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
 
     public void onCameraViewStarted(int width, int height) {
         image = new Mat(height, width, CvType.CV_8UC4);
-        imageProcessed = new Mat(height, width, CvType.CV_8UC4);
+        imageProcessed = new Mat(SQUARE_SIZE, SQUARE_SIZE, CvType.CV_8UC4);
     }
 
     public void onCameraViewStopped() {
@@ -156,6 +161,14 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         //Imgproc.resize(image, image, image.size(), 0,0, 0);
         //Core.flip(image, image, 1);
 
+        // Crop image
+        Mat mask = Mat.zeros(image.size(), image.type()); // all black
+        int x = (int)((image.size().width/2) - (SQUARE_SIZE/2));
+        int y = (int)((image.size().height/2) - (SQUARE_SIZE/2));
+        Rect sel = new Rect(x, y, SQUARE_SIZE, SQUARE_SIZE);
+        mask.submat(sel).setTo(Scalar.all(255)); // white square
+        Core.bitwise_and(image, mask, image);
+
         // Convert to gray
         Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY);
 
@@ -163,8 +176,11 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
         Imgproc.threshold(image, image , MainActivity.THRESHOLD, 255, Imgproc.THRESH_BINARY);
 
         // Clean
-        Imgproc.erode(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2,2)));
-        Imgproc.dilate(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2,2)));
+        //Imgproc.erode(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20,20)));
+        //Imgproc.dilate(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20,20)));
+
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5));
+        Imgproc.morphologyEx(image, image, Imgproc.MORPH_OPEN, kernel);
 
         return image; // This function must return
     }
@@ -199,8 +215,9 @@ public class ReceiveActivity extends AppCompatActivity implements CvCameraViewLi
     }
 
     private void calculateCharacter() {
-        int error = (int)(lastWhites * 0.2);
-        if (error < 1000) error = 1000;
+        //int error = (int)(lastWhites * 0.2);
+        //if (error < 1000) error = 1000;
+        int error = 10000;
 
         System.out.println("error: " + error);
 
