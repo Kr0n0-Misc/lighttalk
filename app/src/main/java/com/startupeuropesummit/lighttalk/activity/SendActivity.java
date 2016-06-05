@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.startupeuropesummit.lighttalk.R;
+import com.startupeuropesummit.lighttalk.util.Translator;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,7 +36,6 @@ public class SendActivity extends Activity {
     private boolean isFlashOn;
     private String message;
     private int actualPosition;
-    private boolean firstTime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,13 @@ public class SendActivity extends Activity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        cancelSendMessage();
+    }
+
     /**
      * Send message button clicked
      * @param view
@@ -85,7 +93,14 @@ public class SendActivity extends Activity {
             EditText messageText = (EditText) findViewById(R.id.message_text);
             Editable editText = messageText.getText();
             if (editText != null) {
-                sendMessage(editText.toString());
+                String message = editText.toString();
+
+                Translator trans = new Translator();
+                String messageBin = trans.englishToBin(message);
+
+                Toast.makeText(context, "Message: " + messageBin, Toast.LENGTH_LONG).show();
+
+                sendMessage(messageBin);
             }
         }
     }
@@ -161,23 +176,13 @@ public class SendActivity extends Activity {
         } else {
             char actualCharacter = message.charAt(actualPosition);
 
-            if (isFlashOn) {
-                if (actualCharacter == '-') {
-                    if (firstTime) {
-                        firstTime = false;
-                    } else {
-                        firstTime = true;
-                        turnOffFlashLight();
-                        actualPosition++;
-                    }
-                } else if (actualCharacter == '.') {
-                    turnOffFlashLight();
-                    actualPosition++;
-                }
-            } else {
-                Log.d(TAG, "actualCharacter: " + actualCharacter);
+            if (actualCharacter == '1') {
                 turnOnFlashLight();
+            } else {
+                turnOffFlashLight();
             }
+
+            actualPosition++;
         }
     }
 

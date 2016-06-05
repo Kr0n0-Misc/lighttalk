@@ -74,6 +74,13 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        cancelSendMessage();
+    }
+
     /**
      * Send message button clicked
      * @param view

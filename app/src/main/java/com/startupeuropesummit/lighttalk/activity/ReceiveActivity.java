@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.startupeuropesummit.lighttalk.R;
+import com.startupeuropesummit.lighttalk.util.Translator;
 
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.BaseLoaderCallback;
@@ -53,7 +54,6 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
     private int actualWhites;
 
     private boolean isFlashOn;
-    private boolean isLine;
 
     private List<Character> message;
 
@@ -225,26 +225,25 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
 
         if (actualWhites < minLastBorder) {
             // From on to off
-            if (isLine) {
-                message.add(new Character('-'));
-            } else {
-                message.add(new Character(('.')));
-            }
+            message.add('0');
 
             isFlashOn = false;
-            isLine = false;
-
-            // Show message on screen
-            showMessage();
         } else if (actualWhites > maxLastBorder) {
             // From off to on
+            message.add('1');
+
             isFlashOn = true;
         } else {
-            // No change
-            if (isFlashOn) {
-                isLine = true;
+            // No change (duplicate last one)
+            if (message.size()>2) {
+                message.add(message.get(message.size() - 1));
+            } else {
+                message.add('0');
             }
         }
+
+        // Show message on screen
+        showMessage();
     }
 
     private void showMessage() {
@@ -253,9 +252,17 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
             messageStr += message.get(i);
         }
 
+        Translator trans = new Translator();
+        String messageEngStr = trans.binToEnglish(messageStr);
+
         TextView textView = (TextView)findViewById(R.id.message);
         if (textView != null) {
-            textView.setText(messageStr);
+            textView.setText(messageEngStr);
+        }
+
+        TextView textViewBin = (TextView)findViewById(R.id.messageBin);
+        if (textViewBin != null) {
+            textViewBin.setText(messageStr);
         }
     }
 

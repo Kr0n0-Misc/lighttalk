@@ -22,4 +22,13 @@
         android:textSize="60dp"
         android:fontFamily="sans-serif-thin" />
 
+    <TextView
+        android:id="@+id/messageBin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        android:textSize="60dp"
+        android:fontFamily="sans-serif-thin"
+        android:layout_gravity="bottom" />
+
 </FrameLayout>
