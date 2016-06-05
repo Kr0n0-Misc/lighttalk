@@ -29,6 +29,7 @@ public class SendActivity extends Activity {
 
     private Timer timer;
     private TimerTask timerTask;
+    private boolean sendingMessage = false;
 
     private boolean isFlashOn;
     private String message;
@@ -78,11 +79,14 @@ public class SendActivity extends Activity {
      * @param view
      */
     public void sendMessageClicked(View view) {
-        // Do something in response to button click
-        EditText messageText = (EditText) findViewById(R.id.message_text);
-        Editable editText = messageText.getText();
-        if (editText != null) {
-            sendMessage(editText.toString());
+        if (!sendingMessage) {
+            sendingMessage = true;
+
+            EditText messageText = (EditText) findViewById(R.id.message_text);
+            Editable editText = messageText.getText();
+            if (editText != null) {
+                sendMessage(editText.toString());
+            }
         }
     }
 
@@ -135,6 +139,8 @@ public class SendActivity extends Activity {
     }
 
     public void cancelSendMessage() {
+        sendingMessage = false;
+
         turnOffFlashLight();
 
         //stop the timer, if it's not already null
