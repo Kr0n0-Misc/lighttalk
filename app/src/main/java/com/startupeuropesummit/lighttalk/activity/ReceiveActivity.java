@@ -161,7 +161,7 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
         //Core.flip(image, image, 1);
 
         // Crop image
-        /*Mat mask = Mat.zeros(image.size(), image.type()); // all black
+        Mat mask = Mat.zeros(image.size(), image.type()); // all black
         int x = (int)((image.size().width/2) - (SQUARE_SIZE/2));
         int y = (int)((image.size().height/2) - (SQUARE_SIZE/2));
         Rect sel = new Rect(x, y, SQUARE_SIZE, SQUARE_SIZE);
@@ -179,7 +179,7 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
         //Imgproc.dilate(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20,20)));
 
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5));
-        Imgproc.morphologyEx(image, image, Imgproc.MORPH_OPEN, kernel);*/
+        Imgproc.morphologyEx(image, image, Imgproc.MORPH_OPEN, kernel);
 
         return image; // This function must return
     }
