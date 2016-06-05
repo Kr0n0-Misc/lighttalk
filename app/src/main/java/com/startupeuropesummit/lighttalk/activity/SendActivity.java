@@ -2,16 +2,15 @@ package com.startupeuropesummit.lighttalk.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
-import android.os.Handler;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.view.WindowManager;
+import android.widget.EditText;
 
 import com.startupeuropesummit.lighttalk.R;
 
@@ -22,20 +21,14 @@ import java.util.TimerTask;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends Activity {
+public class SendActivity extends Activity {
 
-    private static String TAG = "MainActivity";
-
-    public static int DELAY_START = 1500;
-    public static int FRAME_RATE = 500;
-
-    public static int THRESHOLD = 128;
+    private static String TAG = "SendActivity";
 
     private Context context;
 
     private Timer timer;
     private TimerTask timerTask;
-    final Handler handler = new Handler();
     private boolean sendingMessage = false;
 
     private boolean isFlashOn;
@@ -49,7 +42,7 @@ public class MainActivity extends Activity {
 
         this.context = this;
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_send);
 
         /*
 		 * First check if device is supporting flashlight or not
@@ -74,43 +67,37 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
     /**
      * Send message button clicked
      * @param view
      */
     public void sendMessageClicked(View view) {
-        Intent intent = new Intent(this, SendActivity.class);
-        startActivity(intent);
-    }
+        if (!sendingMessage) {
+            sendingMessage = true;
 
-    /**
-     * Receive message button clicked
-     * @param view
-     */
-    public void receiveMessageClicked(View view) {
-        Intent intent = new Intent(this, ReceiveActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     * SOS message button clicked
-     * @param view
-     */
-    public void sosMessageClicked(View view) {
-        // Do something in response to button click
-        sendMessage("...-.");
+            EditText messageText = (EditText) findViewById(R.id.message_text);
+            Editable editText = messageText.getText();
+            if (editText != null) {
+                sendMessage(editText.toString());
+            }
+        }
     }
 
     private void turnOnFlashLight(){
-        try{
-
+        try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
             String[] list = manager.getCameraIdList();
             manager.setTorchMode(list[0], true);
 
             isFlashOn = true;
-        }
-        catch (CameraAccessException cae){
+        } catch (CameraAccessException cae){
             Log.e(TAG, cae.getMessage());
             cae.printStackTrace();
         }
@@ -138,34 +125,23 @@ public class MainActivity extends Activity {
     }
 
     public void sendMessage(String message) {
-        if (!sendingMessage) {
-            sendingMessage = true;
+        //set a new Timer
+        timer = new Timer();
 
-            //set a new Timer
-            timer = new Timer();
+        this.message = message;
+        this.actualPosition = 0;
 
-            this.message = message;
-            this.actualPosition = 0;
+        //initialize the TimerTask's job
+        initializeTimerTask();
 
-            //initialize the TimerTask's job
-            initializeTimerTask();
-
-            // Set button color
-            Button sosButton = (Button) findViewById(R.id.sos_button);
-            sosButton.setBackgroundColor(Color.parseColor("#FF4081"));
-
-            //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
-            timer.schedule(timerTask, DELAY_START, FRAME_RATE);
-        }
+        //schedule the timer, after the first DELAY_STARTms the TimerTask will run every FRAME_RATEms
+        timer.schedule(timerTask, MainActivity.DELAY_START, MainActivity.FRAME_RATE); //
     }
 
     public void cancelSendMessage() {
         sendingMessage = false;
-        turnOffFlashLight();
 
-        // Set button color
-        Button sosButton = (Button)findViewById(R.id.sos_button);
-        sosButton.setBackgroundColor(Color.parseColor("#4CB5AB"));
+        turnOffFlashLight();
 
         //stop the timer, if it's not already null
         if (timer != null) {
@@ -208,11 +184,7 @@ public class MainActivity extends Activity {
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        checkActualPosition();
-                    }
-                });
+                checkActualPosition();
             }
         };
     }

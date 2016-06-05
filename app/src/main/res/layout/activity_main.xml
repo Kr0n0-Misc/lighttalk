@@ -2,22 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="@color/background"
     tools:context=".activity.MainActivity">
-
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
-    <!-- <TextView
-        android:id="@+id/fullscreen_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:keepScreenOn="true"
-        android:text="@string/dummy_content"
-        android:textColor="#33b5e5"
-        android:textSize="50sp"
-        android:textStyle="bold" /> -->
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -43,6 +29,9 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/send_button"
+                android:textSize="72dp"
+                android:fontFamily="sans-serif-thin"
+                android:background="@color/button1"
                 android:onClick="sendMessageClicked"/>
 
             <Button
@@ -52,6 +41,9 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/receive_button"
+                android:textSize="72dp"
+                android:fontFamily="sans-serif-thin"
+                android:background="@color/button2"
                 android:onClick="receiveMessageClicked"/>
 
             <Button
@@ -61,6 +53,9 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:text="@string/sos_button"
+                android:textSize="72dp"
+                android:fontFamily="sans-serif-thin"
+                android:background="@color/button3"
                 android:onClick="sosMessageClicked"/>
 
         </LinearLayout>
