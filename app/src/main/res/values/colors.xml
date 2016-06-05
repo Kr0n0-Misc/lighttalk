@@ -12,6 +12,8 @@
     <color name="button2">#555555</color>
     <color name="button3">#4CB5AB</color>
 
+    <color name="colorBinary">#4CB5AB</color>
+
     <color name="color_message">#FFFFFF</color>
     <color name="color_message_hint">#AAAAAA</color>
     <color name="send_color">#4CB5AB</color>

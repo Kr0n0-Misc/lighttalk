@@ -26,9 +26,9 @@
         android:id="@+id/messageBin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"
-        android:textSize="60dp"
-        android:fontFamily="sans-serif-thin"
+        android:textColor="@color/colorBinary"
+        android:textSize="16dp"
+        android:fontFamily="sans-serif-light"
         android:layout_gravity="bottom" />
 
 </FrameLayout>
