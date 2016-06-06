@@ -61,7 +61,6 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
     private CameraBridgeViewBase mOpenCvCameraView;
 
     Mat image;
-    Mat imageProcessed;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -145,7 +144,6 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
 
     public void onCameraViewStarted(int width, int height) {
         image = new Mat(height, width, CvType.CV_8UC4);
-        imageProcessed = new Mat(SQUARE_SIZE, SQUARE_SIZE, CvType.CV_8UC4);
     }
 
     public void onCameraViewStopped() {
@@ -162,8 +160,8 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
 
         // Crop image
         Mat mask = Mat.zeros(image.size(), image.type()); // all black
-        int x = (int)((image.size().width/2) - (SQUARE_SIZE/2));
-        int y = (int)((image.size().height/2) - (SQUARE_SIZE/2));
+        int x = (int) ((image.size().width / 2) - (SQUARE_SIZE / 2));
+        int y = (int) ((image.size().height / 2) - (SQUARE_SIZE / 2));
         Rect sel = new Rect(x, y, SQUARE_SIZE, SQUARE_SIZE);
         mask.submat(sel).setTo(Scalar.all(255)); // white square
         Core.bitwise_and(image, mask, image);
@@ -172,7 +170,7 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
         Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY);
 
         // Get the thresholded image
-        Imgproc.threshold(image, image , MainActivity.THRESHOLD, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(image, image, MainActivity.THRESHOLD, 255, Imgproc.THRESH_BINARY);
 
         // Clean
         //Imgproc.erode(image, image, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20,20)));
@@ -185,17 +183,11 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
     }
 
     public void checkActualLight() {
-        // now convert to gray
-        //Imgproc.cvtColor(image, imageProcessed, Imgproc.COLOR_RGB2GRAY);
-
-        // get the thresholded image
-        //Imgproc.threshold(imageProcessed, imageProcessed , MainActivity.THRESHOLD, 255, Imgproc.THRESH_BINARY);
-
         // Calculate histogram
         List<Mat> matList = new LinkedList<Mat>();
         matList.add(image);
         Mat histogram = new Mat();
-        MatOfFloat ranges=new MatOfFloat(0,256);
+        MatOfFloat ranges = new MatOfFloat(0, 256);
         Imgproc.calcHist(
                 matList,
                 new MatOfInt(0),
@@ -206,7 +198,7 @@ public class ReceiveActivity extends Activity implements CvCameraViewListener2 {
 
         //int black = (int)(histogram.get(0, 0)[0]);
         lastWhites = actualWhites;
-        actualWhites = (int)(histogram.get(1, 0)[0]);
+        actualWhites = (int) (histogram.get(1, 0)[0]);
 
         System.out.println("lastWhites: " + lastWhites + " - actualWhites: " + actualWhites);
 

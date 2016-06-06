@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
      */
     public void sosMessageClicked(View view) {
         // Do something in response to button click
-        sendMessage("...-.");
+        sendMessage("...---...");
     }
 
     private void turnOnFlashLight(){

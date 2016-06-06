@@ -25,7 +25,7 @@ public class Translator {
         englishBinMap.put("i", "001001");
         englishBinMap.put("j", "001010");
         englishBinMap.put("k", "001011");
-        englishBinMap.put("l", "001100");
+        englishBinMap.put("l", "011100");
         englishBinMap.put("m", "001101");
         englishBinMap.put("n", "001110");
         englishBinMap.put("o", "001111");
